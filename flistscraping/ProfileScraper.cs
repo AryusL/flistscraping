@@ -15,10 +15,10 @@ namespace flistscraping
         private CharacterInfo characterInfo;
         public CharacterInfo CharacterInfo { get { return characterInfo; } }
 
-        public ProfileScraping(string url)
+        public ProfileScraping(string url, CharacterInfo characterInfo)
         {
             this.url = url;
-            characterInfo = new CharacterInfo();
+            this.characterInfo = characterInfo;
             HtmlWeb web = new HtmlWeb();
             htmlDoc = web.Load(url);
             // Select the <a> tag using HtmlAgilityPack
@@ -66,7 +66,10 @@ namespace flistscraping
                 if (statBox != null)
                 {
                     // Loop through each span tag within the statbox div
-                    foreach (var span in statBox.SelectNodes(".//span"))
+                    var spanList = statBox.SelectNodes(".//span");
+                    if (spanList == null)
+                        return;
+                    foreach (var span in spanList)
                     {
                         // Get the name of the variable from the span tag's inner text
                         string variableName = span.InnerText;
@@ -92,7 +95,10 @@ namespace flistscraping
             if (tabsRpInfo != null)
             {
                 // Loop through each span tag within the statbox div
-                foreach (var span in tabsRpInfo.SelectNodes(".//span[@class='taglabel']"))
+                var spanList = tabsRpInfo.SelectNodes(".//span[@class='taglabel']");
+                if (spanList == null)
+                    return;
+                foreach (var span in spanList)
                 {
                     // Get the name of the variable from the span tag's inner text
                     string variableName = span.InnerText;
@@ -129,7 +135,10 @@ namespace flistscraping
 
         public void ScrapeKinks(HtmlNode node, CharacterInfo.KinkPosition kp)
         {
-            foreach (var a in node.SelectNodes(".//a"))
+            var aList = node.SelectNodes(".//a");
+            if (aList == null)
+                return;
+            foreach (var a in aList)
             {
                 bool isCustom = a.HasClass("Character_CustomFetish");
                 var content = a.InnerHtml;
